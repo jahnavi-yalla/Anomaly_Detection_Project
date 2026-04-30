@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamSight — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0b1120 0%, #17233d 100%);
+      padding: 20px;
+      color: #f8fafc;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 450px;
+    }
+
+    /* Logo */
+    .logo-block {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 18px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.45);
+    }
+
+    .logo-name {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .logo-name span {
+      color: #4f46e5;
+    }
+
+    .logo-sub {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      font-weight: 400;
+    }
+
+    /* Card */
+    .card {
+      background: rgba(30, 41, 59, 0.8);
+      border-radius: 24px;
+      padding: 38px 36px 32px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #4f46e5, #7c3aed, #a855f7);
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+      letter-spacing: -0.03em;
+    }
+
+    .card-sub {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      margin-bottom: 28px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 7px;
+    }
+
+    input[type=text],
+    input[type=password] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      color: #fff;
+      background: rgba(15, 23, 42, 0.5);
+      transition: all 0.15s;
+      min-height: 52px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+      background: rgba(15, 23, 42, 0.8);
+      color: #fff;
+    }
+
+    input::placeholder {
+      color: rgba(148, 163, 184, 0.5);
+    }
+
+    /* Button */
+    .btn-login {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 8px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 56px;
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+      letter-spacing: -0.01em;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-login:hover {
+      box-shadow: 0 10px 30px rgba(79, 70, 229, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    /* Alerts */
+    .alert-error {
+      background: rgba(220, 38, 38, 0.1);
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      border-left: 4px solid #dc2626;
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #fca5a5;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-left: 4px solid #22c55e;
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #86efac;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+
+    /* Credentials */
+    .creds {
+      background: rgba(15, 23, 42, 0.8);
+      border-left: 4px solid #4f46e5;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 16px;
+      margin-top: 20px;
+      font-size: 0.76rem;
+      color: #a5b4fc;
+      line-height: 2.4;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .creds-title {
+      font-weight: 700;
+      color: #cbd5e1;
+      margin-bottom: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+    }
+
+    /* Footer */
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .login-footer a {
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      color: #6366f1;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Logo -->
+    <div class="logo-block">
+      <div class="logo-icon">📊</div>
+      <div class="logo-name">Stream<span>Sight</span></div>
+      <div class="logo-sub">Business Intelligence Platform</div>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+      <div class="card-title">Welcome back</div>
+      <div class="card-sub">Sign in to access your dashboard</div>
+
+      {% if signup_success %}
+        <div class="alert-success">
+          ✅ Sign-up successful! Please login with your new credentials.
+        </div>
+      {% endif %}
+
+      {% if error %}
+        <div class="alert-error">❌ {{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('login') }}">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn-login">Sign In →</button>
+      </form>
+
+      <div class="creds">
+        <div class="creds-title">Demo Credentials</div>
+        admin &nbsp;&nbsp;&nbsp;/ admin123 &nbsp;&nbsp;→ Admin<br>
+        manager / manager123 → Manager<br>
+        viewer &nbsp;/ viewer123 &nbsp;&nbsp;→ Viewer
+      </div>
+
+      <div class="login-footer">
+        Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

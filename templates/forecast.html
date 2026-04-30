@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-hd">
+  <div class="page-eyebrow">Sales Forecasting</div>
+  <div class="page-title">🔮 Forecast</div>
+  <div class="page-subtitle">Predict future sales using Prophet or Linear Trend fallback</div>
+</div>
+
+<div class="card">
+  <div class="card-head"><div class="card-title">Configure Forecast</div></div>
+  <div class="card-body">
+    <form method="POST" style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div class="form-group" style="margin:0;flex:0 0 220px">
+        <label class="form-label">Forecast Days (7 – 90)</label>
+        <input type="number" name="periods" class="form-input" value="30" min="7" max="90">
+      </div>
+      <button type="submit" class="btn">🔮 Run Forecast</button>
+    </form>
+  </div>
+</div>
+
+{% if fc_result %}
+<div class="alert alert-info">
+  Engine: <b>{{ engine|upper }}</b>
+  {% if engine == 'linear' %} — Install Prophet for better accuracy: <code style="font-family:'JetBrains Mono',monospace">pip install prophet</code>{% endif %}
+</div>
+<div class="card">
+  <div class="card-head"><div class="card-title">Sales Forecast Chart <span class="card-tag">{{ engine|title }}</span></div></div>
+  <div class="card-body"><div id="fc-chart"></div></div>
+</div>
+{% if fc_table %}
+<div class="card">
+  <div class="card-head"><div class="card-title">Forecast Table</div></div>
+  <div class="card-body">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Predicted Sales</th><th>Low Estimate</th><th>High Estimate</th></tr>
+        </thead>
+        <tbody>
+          {% for row in fc_table %}
+          <tr>
+            <td style="font-family:'JetBrains Mono',monospace">{{ row.ds }}</td>
+            <td style="font-weight:800;color:#4f46e5">₹{{ "{:,.0f}".format(row.yhat) }}</td>
+            <td style="color:#64748b">₹{{ "{:,.0f}".format(row.yhat_lower) }}</td>
+            <td style="color:#64748b">₹{{ "{:,.0f}".format(row.yhat_upper) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">🔮</div>
+  <div class="empty-title">Ready to Forecast</div>
+  <div class="empty-text">Set the number of days above and click Run Forecast to predict future sales with confidence intervals</div>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if fc_result %}
+<script>renderPlot('fc-chart', {{ fc_result|safe }});</script>
+{% endif %}
+{% endblock %}

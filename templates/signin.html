@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamSight — Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0b1120 0%, #17233d 100%);
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: transparent;
+      padding: 0;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .card-subtitle {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      font-weight: 400;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      background: rgba(15, 23, 42, 0.5);
+      border: 2px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      min-height: 48px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .form-control:focus {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: #4f46e5;
+      color: #fff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-control::placeholder {
+      color: rgba(148, 163, 184, 0.5);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: #4f46e5;
+      border: none;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+      min-height: 48px;
+    }
+
+    .btn-submit:hover {
+      background: #4338ca;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    }
+
+    .alert {
+      border: none;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      border-left: 4px solid;
+    }
+
+    .alert-danger {
+      background: rgba(220, 38, 38, 0.1);
+      border-left-color: #dc2626;
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.1);
+      border-left-color: #22c55e;
+      color: #86efac;
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .form-footer p {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      margin-bottom: 0;
+    }
+
+    .form-footer a {
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .form-footer a:hover {
+      color: #6366f1;
+    }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .logo-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .logo-text span {
+      color: #4f46e5;
+    }
+
+    @media (max-width: 576px) {
+      .card {
+        margin: 0;
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="max-width: 450px;">
+    <div class="card p-0">
+      <div class="card-body p-5">
+        <div class="logo-block">
+          <div class="logo-icon">📊</div>
+          <div class="logo-text">Stream<span>Sight</span></div>
+        </div>
+
+        <h2 class="card-title">Create Account</h2>
+        <p class="card-subtitle">Sign up to save your profile and access StreamSight dashboard</p>
+
+        {% if error %}
+          <div class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+        {% endif %}
+
+        <form method="post" class="mt-4">
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Choose a username" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" name="email" placeholder="your.email@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Create a strong password (min 6 chars)" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" name="confirm_password" placeholder="Re-enter your password" required>
+          </div>
+
+          <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+
+        <div class="form-footer">
+          <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

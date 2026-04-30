@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreamSight — Business Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/main.css">
+  <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="tb-left">
+    <div class="tb-status-pills">
+      <div class="tb-pill active"><span class="dot"></span>Online</div>
+      <div class="tb-pill">ML Detection</div>
+      <div class="tb-pill">Forecasting</div>
+      <div class="tb-pill">Fraud Rules</div>
+    </div>
+  </div>
+  <div class="tb-brand">
+    <div class="tb-logo">Stream<span>Sight</span></div>
+    <div class="tb-tagline">Business Intelligence Platform</div>
+  </div>
+  <div class="tb-right">
+    <span class="tb-user">{{ username }}</span>
+    <span class="tb-role">{{ role }}</span>
+    <a href="/logout" class="sign-out">Sign Out</a>
+  </div>
+</header>
+
+<!-- ══ UPLOAD BAR — Full Width ══ -->
+<div class="upload-bar">
+  <div class="upload-bar-label">Business Type &amp; Dataset Configuration</div>
+  <div class="biz-row">
+    {% for bname, bdata in biz_profiles.items() %}
+    <button class="biz-btn {% if bname == biz_type %}active{% endif %}"
+            onclick="setBiz('{{ bname }}')">
+      {{ bdata.icon }} {{ bname }}
+    </button>
+    {% endfor %}
+  </div>
+  <div class="upload-row">
+    <label for="file-upload" class="upload-file-label">
+      📂 Upload Dataset (CSV / Excel)
+    </label>
+    <input type="file" id="file-upload" accept=".csv,.xlsx,.xls"
+           onchange="uploadDataset(this)" style="display:none">
+    <div class="upload-status">
+      <div id="upload-status">
+        {% if uploaded_name %}
+        <div class="badge-ok">{{ uploaded_name }} — active</div>
+        {% else %}
+        <div class="badge-default">Using default dataset — upload your own above</div>
+        {% endif %}
+      </div>
+      <div class="upload-hint">Supports: CSV · Excel (.xlsx/.xls) &nbsp;·&nbsp; Required columns: date · total_sales · transaction_count</div>
+    </div>
+    {% if uploaded_name %}
+    <button class="btn btn-secondary btn-sm" onclick="clearUpload()">✕ Clear</button>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ══ TABS NAV ══ -->
+<nav class="tabs-bar">
+  {% if "dashboard"  in pages %}<a href="/dashboard"  class="tab-link {% if request.path=='/dashboard'  %}active{% endif %}">📊 Dashboard</a>{% endif %}
+  {% if "anomalies"  in pages %}<a href="/anomalies"  class="tab-link {% if request.path=='/anomalies'  %}active{% endif %}">🚨 Anomalies</a>{% endif %}
+  {% if "analytics"  in pages %}<a href="/analytics"  class="tab-link {% if request.path=='/analytics'  %}active{% endif %}">📈 Analytics</a>{% endif %}
+  {% if "forecast"   in pages %}<a href="/forecast"   class="tab-link {% if request.path=='/forecast'   %}active{% endif %}">🔮 Forecast</a>{% endif %}
+  {% if "fraud"      in pages %}<a href="/fraud"      class="tab-link {% if request.path=='/fraud'      %}active{% endif %}">🛡️ Fraud</a>{% endif %}
+  {% if "live"       in pages %}<a href="/live"       class="tab-link {% if request.path=='/live'       %}active{% endif %}">🔴 Live Feed</a>{% endif %}
+  {% if "reports"    in pages %}<a href="/reports"    class="tab-link {% if request.path=='/reports'    %}active{% endif %}">📄 Reports</a>{% endif %}
+  {% if "settings"   in pages %}<a href="/settings"   class="tab-link {% if request.path=='/settings'   %}active{% endif %}">⚙️ Settings</a>{% endif %}
+  {% if "database"   in pages %}<a href="/database"   class="tab-link {% if request.path=='/database'   %}active{% endif %}">🗄️ Database</a>{% endif %}
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main class="main fadein">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  StreamSight Business Intelligence &nbsp;·&nbsp; Python · Flask · Plotly · Isolation Forest · Prophet
+</footer>
+
+<script src="/static/js/main.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

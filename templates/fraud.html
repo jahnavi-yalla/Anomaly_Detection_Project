@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-hd">
+  <div class="page-eyebrow">Fraud Detection</div>
+  <div class="page-title">🛡️ Fraud Detection</div>
+  <div class="page-subtitle">Statistical rule-based scanner using 5 detection patterns</div>
+</div>
+
+<form method="POST" style="margin-bottom:22px">
+  <button type="submit" class="btn">🛡️ Run Fraud Detection Scan</button>
+</form>
+
+{% if fraud_result is not none %}
+  {% if fraud_sum %}
+  <div class="tile-grid">
+    <div class="tile" style="--tc:#dc2626">
+      <div class="tile-label">Flagged Transactions</div>
+      <div class="tile-val" style="color:#dc2626">{{ fraud_sum.total_flagged }}</div>
+    </div>
+    <div class="tile" style="--tc:#d97706">
+      <div class="tile-label">Amount at Risk</div>
+      <div class="tile-val" style="color:#d97706">₹{{ "{:,.0f}".format(fraud_sum.total_at_risk) }}</div>
+    </div>
+    <div class="tile" style="--tc:#4f46e5">
+      <div class="tile-label">Top Region</div>
+      <div class="tile-val" style="color:#4f46e5;font-size:1.2rem">{{ fraud_sum.top_region }}</div>
+    </div>
+    <div class="tile" style="--tc:#7c3aed">
+      <div class="tile-label">Top Signal</div>
+      <div class="tile-val" style="color:#7c3aed;font-size:.9rem">{{ fraud_sum.top_reason }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if fraud_result|length == 0 %}
+  <div class="alert alert-success">✅ No suspicious transactions detected in this dataset.</div>
+  {% else %}
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">Flagged Transactions <span class="card-tag">{{ fraud_result|length }} found</span></div>
+      <a href="/download_csv/fraud" class="btn btn-secondary btn-sm">⬇ Download CSV</a>
+    </div>
+    <div class="card-body">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>{% for key in fraud_result[0].keys() %}<th>{{ key }}</th>{% endfor %}</tr>
+          </thead>
+          <tbody>
+            {% for row in fraud_result %}
+            <tr>{% for val in row.values() %}<td>{{ val }}</td>{% endfor %}</tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% if rb_json %}
+  <div class="card">
+    <div class="card-head"><div class="card-title">Signal Breakdown</div></div>
+    <div class="card-body"><div id="rb-chart"></div></div>
+  </div>
+  {% endif %}
+  {% endif %}
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">🛡️</div>
+  <div class="empty-title">Fraud Scanner Ready</div>
+  <div class="empty-text">
+    Click the button above to scan all transactions using 5 built-in statistical detection rules:
+    Large Transactions · Round Amounts · High Frequency · Suppressed Sales · High Value Low Volume
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if rb_json %}
+<script>renderPlot('rb-chart', {{ rb_json|safe }});</script>
+{% endif %}
+{% endblock %}

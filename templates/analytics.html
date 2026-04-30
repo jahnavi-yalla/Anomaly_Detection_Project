@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-hd">
+  <div class="page-eyebrow">Data Analytics</div>
+  <div class="page-title">📈 Analytics</div>
+  <div class="page-subtitle">Deep dive into sales patterns, trends and anomaly distributions</div>
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-head"><div class="card-title">🗓️ Anomaly Heatmap <span class="card-tag">By Week &amp; Day</span></div></div>
+    <div class="card-body"><div id="hmap-chart"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">📉 7-Day Rolling Average</div></div>
+    <div class="card-body"><div id="roll-chart"></div></div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><div class="card-title">🫧 Transactions vs Revenue <span class="card-tag">Bubble Size = Avg Transaction</span></div></div>
+  <div class="card-body"><div id="bub-chart"></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+renderPlot('hmap-chart', {{ hmap_json|safe }});
+renderPlot('roll-chart', {{ roll_json|safe }});
+renderPlot('bub-chart',  {{ bub_json|safe }});
+</script>
+{% endblock %}

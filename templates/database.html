@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-hd">
+  <div class="page-eyebrow">Database Management</div>
+  <div class="page-title">🗄️ Database</div>
+  <div class="page-subtitle">SQLite database — users, datasets, anomaly runs, fraud scans and alert logs</div>
+</div>
+
+<!-- DB Summary Cards -->
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-icon">🔍</div>
+    <div class="kpi-label">Total Anomaly Runs</div>
+    <div class="kpi-val">{{ db_summary.total_runs }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon">📂</div>
+    <div class="kpi-label">Datasets Uploaded</div>
+    <div class="kpi-val">{{ db_summary.total_datasets }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon">📧</div>
+    <div class="kpi-label">Alerts Sent</div>
+    <div class="kpi-val">{{ db_summary.total_alerts }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon">🛡️</div>
+    <div class="kpi-label">Fraud Scans</div>
+    <div class="kpi-val">{{ db_summary.total_fraud }}</div>
+  </div>
+</div>
+
+<div class="grid-2">
+
+  <!-- Users Management -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">👥 User Management</div>
+      <span class="card-tag">{{ all_users|length }} users</span>
+    </div>
+    <div class="card-body">
+      <div class="table-wrap" style="margin-bottom:20px">
+        <table>
+          <thead>
+            <tr><th>Username</th><th>Role</th><th>Display Name</th><th>Created</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            {% for u in all_users %}
+            <tr>
+              <td style="font-family:'JetBrains Mono',monospace;font-weight:600">{{ u.username }}</td>
+              <td>
+                <span style="padding:2px 8px;border-radius:4px;font-size:.72rem;font-weight:700;
+                  background:{% if u.role=='Admin' %}#eef2ff{% elif u.role=='Manager' %}#fffbeb{% else %}#f0fdf4{% endif %};
+                  color:{% if u.role=='Admin' %}#4f46e5{% elif u.role=='Manager' %}#d97706{% else %}#059669{% endif %}">
+                  {{ u.role }}
+                </span>
+              </td>
+              <td>{{ u.display_name }}</td>
+              <td style="font-size:.75rem;color:#94a3b8;font-family:'JetBrains Mono',monospace">{{ u.created_at[:10] }}</td>
+              <td>
+                {% if u.username != session.get('user') %}
+                <form method="POST" action="/delete_user/{{ u.id }}" style="display:inline">
+                  <button type="submit" class="btn btn-danger btn-sm"
+                    onclick="return confirm('Delete user {{ u.username }}?')">Delete</button>
+                </form>
+                {% else %}
+                <span style="font-size:.75rem;color:#94a3b8">Current</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add User Form -->
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px">
+        <div style="font-size:.82rem;font-weight:700;color:#334155;margin-bottom:14px">➕ Add New User</div>
+        <form method="POST" action="/add_user">
+          <div class="form-row" style="margin-bottom:12px">
+            <div>
+              <label class="form-label">Username</label>
+              <input type="text" name="username" class="form-input" placeholder="username" required>
+            </div>
+            <div>
+              <label class="form-label">Password</label>
+              <input type="password" name="password" class="form-input" placeholder="password" required>
+            </div>
+          </div>
+          <div class="form-row" style="margin-bottom:14px">
+            <div>
+              <label class="form-label">Display Name</label>
+              <input type="text" name="display_name" class="form-input" placeholder="Full Name" required>
+            </div>
+            <div>
+              <label class="form-label">Role</label>
+              <select name="role" class="form-input">
+                <option value="Viewer">Viewer</option>
+                <option value="Manager">Manager</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-full">➕ Add User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Datasets Uploaded -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">📂 Dataset History</div>
+      <span class="card-tag">Last 20</span>
+    </div>
+    <div class="card-body">
+      {% if dataset_hist %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Filename</th><th>Rows</th><th>Date Range</th><th>Uploaded By</th><th>At</th></tr></thead>
+          <tbody>
+            {% for d in dataset_hist %}
+            <tr>
+              <td style="font-weight:600;font-size:.82rem">{{ d.name }}</td>
+              <td style="font-family:'JetBrains Mono',monospace">{{ d.rows }}</td>
+              <td style="font-size:.75rem;color:#64748b">{{ d.date_from }} → {{ d.date_to }}</td>
+              <td>{{ d.uploaded_by }}</td>
+              <td style="font-size:.72rem;color:#94a3b8;font-family:'JetBrains Mono',monospace">{{ d.uploaded_at[:16] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding:30px">
+        <div class="empty-icon" style="font-size:2rem">📂</div>
+        <div class="empty-title" style="font-size:.9rem">No datasets uploaded yet</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- Anomaly Run History -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">🔍 Anomaly Detection History</div>
+    <span class="card-tag">Last 10 runs</span>
+  </div>
+  <div class="card-body">
+    {% if anom_hist %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Dataset</th><th>Run Date</th><th>Contamination</th><th>Total Days</th><th>Anomalies</th><th>Rate</th><th>Run By</th></tr></thead>
+        <tbody>
+          {% for r in anom_hist %}
+          <tr>
+            <td style="font-weight:600">{{ r.dataset_name }}</td>
+            <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem">{{ r.run_date[:16] }}</td>
+            <td style="font-family:'JetBrains Mono',monospace;color:#4f46e5">{{ r.contamination }}</td>
+            <td>{{ r.total_days }}</td>
+            <td style="font-weight:700;color:#dc2626">{{ r.total_anomalies }}</td>
+            <td style="color:#d97706">{{ "%.1f"|format(r.anomaly_rate) }}%</td>
+            <td>{{ r.run_by }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No anomaly runs recorded yet. Go to Dashboard to run detection.</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid-2">
+
+  <!-- Fraud History -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">🛡️ Fraud Scan History</div>
+      <span class="card-tag">Last 10</span>
+    </div>
+    <div class="card-body">
+      {% if fraud_hist %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Dataset</th><th>Flagged</th><th>At Risk</th><th>Top Signal</th><th>Date</th></tr></thead>
+          <tbody>
+            {% for r in fraud_hist %}
+            <tr>
+              <td style="font-weight:600">{{ r.dataset_name }}</td>
+              <td style="font-weight:700;color:#dc2626">{{ r.total_flagged }}</td>
+              <td style="color:#d97706">₹{{ "{:,.0f}".format(r.total_at_risk) }}</td>
+              <td style="font-size:.78rem">{{ r.top_reason }}</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#94a3b8">{{ r.run_date[:16] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding:30px">
+        <div class="empty-icon" style="font-size:2rem">🛡️</div>
+        <div class="empty-title" style="font-size:.9rem">No fraud scans yet</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Alert Logs -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">📧 Alert Log History</div>
+      <span class="card-tag">Last 20</span>
+    </div>
+    <div class="card-body">
+      {% if alert_hist %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Type</th><th>Recipient</th><th>Status</th><th>Sent By</th><th>At</th></tr></thead>
+          <tbody>
+            {% for a in alert_hist %}
+            <tr>
+              <td>{{ a.alert_type }}</td>
+              <td style="font-size:.8rem">{{ a.recipient }}</td>
+              <td>
+                <span style="padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:700;
+                  background:{% if a.status=='success' %}#ecfdf5{% else %}#fef2f2{% endif %};
+                  color:{% if a.status=='success' %}#059669{% else %}#dc2626{% endif %}">
+                  {{ a.status }}
+                </span>
+              </td>
+              <td>{{ a.sent_by }}</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#94a3b8">{{ a.sent_at[:16] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding:30px">
+        <div class="empty-icon" style="font-size:2rem">📧</div>
+        <div class="empty-title" style="font-size:.9rem">No alerts sent yet</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

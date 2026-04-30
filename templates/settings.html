@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-hd">
+  <div class="page-eyebrow">Configuration</div>
+  <div class="page-title">⚙️ Settings</div>
+  <div class="page-subtitle">Adjust detection sensitivity and view system information</div>
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-head"><div class="card-title">🎛️ Detection Parameters</div></div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="form-group">
+          <label class="form-label">Anomaly Threshold (contamination)</label>
+          <div class="range-wrap">
+            <input type="range" name="contamination" id="cont-slider"
+              min="0.01" max="0.20" step="0.01" value="{{ contamination }}">
+            <span id="cont-val" class="range-val">{{ contamination }}</span>
+          </div>
+          <div class="form-hint">Higher = more anomalies flagged &nbsp;·&nbsp; Default is 0.05 (5% of days)</div>
+        </div>
+        <button type="submit" class="btn btn-full">✓ Apply Settings</button>
+      </form>
+      <div class="code-block" style="margin-top:18px">
+        <div><span class="code-key">contamination</span><span class="code-val" style="color:#0f172a">{{ contamination }}</span></div>
+        <div><span class="code-key">anomalies_found</span><span class="code-val" style="color:#dc2626">{{ anomalies|length }}</span></div>
+        <div><span class="code-key">anomaly_rate</span><span class="code-val" style="color:#d97706">{{ "%.2f"|format(anom_pct) }}%</span></div>
+        <div><span class="code-key">total_days</span><span class="code-val" style="color:#0f172a">{{ result_df|length }}</span></div>
+        <div><span class="code-key">active_dataset</span><span class="code-val" style="color:#4f46e5">{{ uploaded_name or "default" }}</span></div>
+        <div><span class="code-key">business_type</span><span class="code-val" style="color:#7c3aed">{{ biz_type }}</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">ℹ️ System Information</div></div>
+    <div class="card-body">
+      {% for label, val in [
+        ("Framework",       "Flask + Jinja2 Templates"),
+        ("Frontend",        "HTML5 + CSS3 + JavaScript"),
+        ("Charts",          "Plotly Interactive Visualizations"),
+        ("Algorithm",       "Isolation Forest (n_estimators=200)"),
+        ("Preprocessing",   "StandardScaler + Rolling Features"),
+        ("Forecast Engine", "Prophet / Linear Trend Fallback"),
+        ("Fraud Detection", "5 Statistical Rule Patterns"),
+        ("Email Alerts",    "Gmail SMTP SSL (Port 465/587)"),
+        ("Authentication",  "Flask Session-Based Login"),
+        ("File Formats",    "CSV · Excel (.xlsx / .xls)"),
+        ("Business Types",  "6 Supported Profiles"),
+      ] %}
+      <div class="info-row">
+        <span class="info-key">{{ label }}</span>
+        <span class="info-val">{{ val }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-hd">
+  <div class="page-eyebrow">Export &amp; Alerts</div>
+  <div class="page-title">📄 Reports</div>
+  <div class="page-subtitle">Download reports, export data and send real-time alerts</div>
+</div>
+{% if msg %}<div class="alert alert-info">{{ msg }}</div>{% endif %}
+<div class="grid-2">
+  <div class="card">
+    <div class="card-head"><div class="card-title">📄 PDF Anomaly Report</div></div>
+    <div class="card-body">
+      <p style="color:#64748b;font-size:.85rem;line-height:1.9;margin-bottom:20px">
+        Generates a professional PDF with executive summary, full anomaly records,
+        spike vs drop breakdown and actionable business recommendations.
+      </p>
+      <a href="/download_pdf" class="btn btn-full btn-lg">📄 Generate &amp; Download PDF</a>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">📊 CSV / Excel Export</div></div>
+    <div class="card-body">
+      <p style="color:#64748b;font-size:.85rem;line-height:1.9;margin-bottom:20px">
+        Download raw data for further analysis in Excel or Google Sheets.
+        All columns and anomaly labels included.
+      </p>
+      <div style="display:flex;gap:12px">
+        <a href="/download_csv/anomalies" class="btn btn-secondary btn-full">⬇ Anomalies CSV</a>
+        <a href="/download_csv/full"      class="btn btn-secondary btn-full">⬇ Full Data CSV</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><div class="card-title">📧 Send Email Alert</div></div>
+  <div class="card-body">
+    <form method="POST" style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <input type="hidden" name="action" value="email">
+      <div class="form-group" style="flex:1;margin:0;min-width:260px">
+        <label class="form-label">Recipient Email Address(es)</label>
+        <input type="text" name="email_to" class="form-input" placeholder="email@example.com">
+      </div>
+      <button type="submit" class="btn">📧 Send Email Alert</button>
+    </form>
+    <div class="form-hint" style="margin-top:10px">
+      Separate multiple emails with commas &nbsp;·&nbsp; Configure Gmail credentials in .env file
+    </div>
+  </div>
+</div>
+{% endblock %}

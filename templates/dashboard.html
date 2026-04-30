@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-hd">
+  <div class="page-eyebrow">Real-Time Anomaly Detection</div>
+  <div class="page-title">{{ biz.icon }} {{ biz_type }} Dashboard</div>
+  <div class="page-subtitle">Dataset: <b>{{ uploaded_name or "Default Dataset" }}</b></div>
+  <div class="stat-strip">
+    <div class="stat-cell">
+      <div class="stat-val">{{ result_df|length }}</div>
+      <div class="stat-lbl">Days Analysed</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-val" style="color:#dc2626">{{ anomalies|length }}</div>
+      <div class="stat-lbl">Anomalies</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-val" style="color:#d97706">{{ "%.1f"|format(anom_pct) }}%</div>
+      <div class="stat-lbl">Anomaly Rate</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-val" style="color:#4f46e5">₹{{ "%.1f"|format(total_rev) }}M</div>
+      <div class="stat-lbl">Total {{ biz.metric }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-icon">📅</div>
+    <div class="kpi-label">Total Days</div>
+    <div class="kpi-val">{{ result_df|length }}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon">🚨</div>
+    <div class="kpi-label">Anomalies Detected</div>
+    <div class="kpi-val" style="color:#dc2626">{{ anomalies|length }}</div>
+    <div class="kpi-delta">{{ "%.1f"|format(anom_pct) }}% of all days</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon">💰</div>
+    <div class="kpi-label">Total {{ biz.metric }}</div>
+    <div class="kpi-val">₹{{ "%.2f"|format(total_rev) }}M</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-icon">📊</div>
+    <div class="kpi-label">Avg Daily Sales</div>
+    <div class="kpi-val">₹{{ "{:,.0f}".format(avg_daily) }}</div>
+  </div>
+</div>
+
+<!-- Sales Trend -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">{{ biz.icon }} {{ biz_type }} — Sales Trend <span class="card-tag">Isolation Forest</span></div>
+  </div>
+  <div class="card-body">
+    <div id="trend-chart"></div>
+  </div>
+</div>
+
+<!-- Bottom Charts -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-head"><div class="card-title">📅 Monthly Anomaly Count</div></div>
+    <div class="card-body"><div id="bar-chart"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="card-title">📊 Sales Distribution</div></div>
+    <div class="card-body"><div id="hist-chart"></div></div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+renderPlot('trend-chart', {{ trend_json|safe }});
+renderPlot('bar-chart',   {{ bar_json|safe }});
+renderPlot('hist-chart',  {{ hist_json|safe }});
+</script>
+{% endblock %}

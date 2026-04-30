@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-hd">
+  <div class="page-eyebrow">Anomaly Detection Results</div>
+  <div class="page-title">🚨 Anomalies</div>
+  <div class="page-subtitle">Flagged days with unusual sales patterns — SPIKE or DROP</div>
+</div>
+
+{% if anomalies|length == 0 %}
+<div class="alert alert-info">No anomalies detected. Try increasing the contamination threshold in Settings.</div>
+{% else %}
+
+<div class="tile-grid">
+  <div class="tile" style="--tc:#dc2626">
+    <div class="tile-label">Total Anomalies</div>
+    <div class="tile-val" style="color:#dc2626">{{ anomalies|length }}</div>
+  </div>
+  <div class="tile" style="--tc:#d97706">
+    <div class="tile-label">Anomaly Rate</div>
+    <div class="tile-val" style="color:#d97706">{{ "%.1f"|format(anom_pct) }}%</div>
+  </div>
+  <div class="tile" style="--tc:#4f46e5">
+    <div class="tile-label">Worst Score</div>
+    <div class="tile-val" style="color:#4f46e5">{{ worst_score }}</div>
+  </div>
+  <div class="tile" style="--tc:#059669">
+    <div class="tile-label">Avg Anomaly Sales</div>
+    <div class="tile-val" style="color:#059669">₹{{ avg_anom_sales }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Score Timeline <span class="card-tag">Lower Score = More Anomalous</span></div>
+  </div>
+  <div class="card-body"><div id="sc-chart"></div></div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Anomaly Records <span class="card-tag">Top 30 by Score</span></div>
+  </div>
+  <div class="card-body">
+    <div class="arow-hd">
+      <span>Date</span><span>Sales</span><span>Transactions</span><span>Score</span><span>Type</span>
+    </div>
+    {% for row in anom_list %}
+    <div class="arow">
+      <span class="arow-date">{{ row.date }}</span>
+      <span class="arow-sales">₹{{ row.total_sales }}</span>
+      <span class="arow-txn">{{ row.transaction_count }} txns</span>
+      <span class="arow-score">{{ row.anomaly_score }}</span>
+      {% if row.type == "SPIKE" %}
+      <span class="badge-spike">SPIKE</span>
+      {% else %}
+      <span class="badge-drop">DROP</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if sc_json %}
+<script>renderPlot('sc-chart', {{ sc_json|safe }});</script>
+{% endif %}
+{% endblock %}
